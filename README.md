@@ -12,6 +12,8 @@ Unofficial node client for PO Editor API
 npm i @xplora-uk/poeditor-client
 ```
 
+See `./example/index.js`
+
 ## maintenance
 
 ### installation
@@ -40,7 +42,6 @@ npm run build
 You can run tests with/without coverage info.
 
 ```sh
-npm run test:unit
 npm run test:coverage
 ```
 

@@ -1,7 +1,7 @@
 import { createAxiosInstance } from '@xplora-uk/axios-with-agentkeepalive';
 import { AxiosInstance } from 'axios';
 import { URLSearchParams } from 'url';
-import { TermAddedResponse, TermDeletedResponse, TermUpdatedResponse } from './generated';
+import { TermAddedResponse, TermDeletedResponse, TermUpdatedResponse, TermsListFullResponse } from './generated';
 import { DataToAddTerms, DataToDeleteTerms, DataToUpdateTerms, InputToUpdateTerms } from './types';
 
 export class PoEditorApi {
@@ -31,6 +31,12 @@ export class PoEditorApi {
     });
     formData.append('data', JSON.stringify(data));
     return formData;
+  }
+
+  listTerms = async (language: string) => {
+    const formData = this._makeFormData({ language });
+    const response = await this._client.post<TermsListFullResponse>('/terms/list', formData.toString());
+    return response.data;
   }
 
   addTerms = async (keys: string[]) => {
