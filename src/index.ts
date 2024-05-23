@@ -1,7 +1,7 @@
 import { createAxiosInstance } from '@xplora-uk/axios-with-agentkeepalive';
 import { AxiosInstance } from 'axios';
 import { URLSearchParams } from 'url';
-import { TermAddedResponse, TermDeletedResponse, TermUpdatedResponse, TermsListFullResponse } from './generated';
+import { TermAddedResponse, TermDeletedResponse, TermUpdatedResponse, TermsListFullResponse, TranslationAddedResponse, TranslationDeletedResponse, TranslationUpdatedResponse } from './generated';
 import { DataToAddTerms, DataToDeleteTerms, DataToUpdateTerms, InputToUpdateTerms } from './types';
 
 export class PoEditorApi {
@@ -18,7 +18,6 @@ export class PoEditorApi {
     readonly id: string,
     readonly baseURL = 'https://api.poeditor.com/v2',
   ) {
-    console.info('PoEditorApi constructor');
     this._client = createAxiosInstance({
       baseURL,
     });
@@ -65,6 +64,44 @@ export class PoEditorApi {
     return response.data;
   }
 
+  addTranslations = async (language: string, translations: Record<string, string>) => {
+    const translationsData: any[] = [];
+    Object.entries(translations).forEach(([key, translation]) => {
+      const { term, context } = makeTermAndContext(key);
+      translationsData.push({ term, context, translation: { content: translation } });
+    });
+    
+    const formData = this._makeFormData(translationsData);
+    formData.append('language', language);
+    const response = await this._client.post<TranslationAddedResponse>('/translations/add', formData.toString());
+    return response.data;
+  }
+  
+  updateTranslations = async (language: string, translations: Record<string, string>) => {
+    const translationsData: any[] = [];
+    Object.entries(translations).forEach(([key, translation]) => {
+      const { term, context } = makeTermAndContext(key);
+      translationsData.push({ term, context, translation: { content: translation } });
+    });
+    
+    const formData = this._makeFormData(translationsData);
+    formData.append('language', language);
+    const response = await this._client.post<TranslationUpdatedResponse>('/translations/update', formData.toString());
+    return response.data;
+  }
+
+  deleteTranslations = async (language: string, keys: string[]) => {
+    const translationsData: any[] = [];
+    keys.forEach(key => {
+      const { term, context } = makeTermAndContext(key);
+      translationsData.push({ term, context });
+    });
+    
+    const formData = this._makeFormData(translationsData);
+    formData.append('language', language);
+    const response = await this._client.post<TranslationDeletedResponse>('/translations/delete', formData.toString());
+    return response.data;
+  }
 }
 
 export function makeTermAndContext(key: string) {

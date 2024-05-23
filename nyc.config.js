@@ -9,8 +9,8 @@ module.exports = {
   ],
   exclude: [
     'src/__tests__',
-    'src/index.ts',
     'src/types.ts',
+    'src/generated'
   ],
   statements: 80,
   branches: 80,
